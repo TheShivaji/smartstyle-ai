@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none">
+  <!-- Matte Black Premium Squircle Background -->
+  <rect x="5" y="5" width="90" height="90" rx="26" fill="#09090b" stroke="#ffffff" stroke-width="4" stroke-opacity="0.9" />
+  
+  <!-- Cyberpunk Geometric "S" Monogram (Streetwear Icon Style) -->
+  <path d="M 70 28 
+           H 36 
+           L 26 44 
+           H 54 
+           L 64 54 
+           H 36 
+           L 26 70 
+           H 66" 
+        stroke="#ffffff" 
+        stroke-width="10" 
+        stroke-linecap="square" 
+        stroke-linejoin="miter" />
+        
+  <!-- Accent Branding Dot (Represents AI feature trigger) -->
+  <circle cx="75" cy="22" r="4" fill="#ffffff" />
+</svg>

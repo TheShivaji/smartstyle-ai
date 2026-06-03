@@ -1,7 +1,10 @@
 import Router from "express";
-import { validateSignup } from "../validators/auth.validators.js";
-import { signup } from "../controllers/auth.controllers.js";
+import { signup, login } from "../controllers/auth.controller.js";
+import { validateSignup, validateLogin } from "../validators/auth.validators.js";
 
 const authRoutes = Router();
 
 authRoutes.post("/signup", validateSignup, signup);
+authRoutes.post("/login", validateLogin, login);
+
+export default authRoutes;
