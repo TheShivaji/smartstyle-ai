@@ -1,29 +1,7 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate, Link } from "react-router-dom";
 import Register from "../feature/auth/pages/Register";
-
-// Temporary Login component with the same brand aesthetic
-function LoginPlaceholder() {
-  return (
-    <div className="min-h-screen bg-neutral-950 flex flex-col items-center justify-center p-6 text-neutral-200 font-sans">
-      <div className="w-full max-w-sm p-8 rounded-2xl bg-neutral-900/50 border border-neutral-800/80 text-center space-y-6 backdrop-blur-md">
-        <div className="space-y-2">
-          <span className="font-serif text-xl font-bold tracking-[0.4em] uppercase text-white">SNITCH</span>
-          <h2 className="text-xl font-light tracking-wide text-neutral-200">Access Account</h2>
-        </div>
-        <p className="text-xs text-neutral-400 font-light leading-relaxed">
-          The login portal is currently undergoing system upgrades for security integration. Please register to test the onboarding pipeline.
-        </p>
-        <Link 
-          to="/register" 
-          className="block w-full py-3.5 bg-white text-black font-semibold text-xs rounded-xl tracking-wider hover:bg-neutral-200 transition-all cursor-pointer"
-        >
-          CREATE NEW ACCOUNT
-        </Link>
-      </div>
-    </div>
-  );
-}
+import Login from "../feature/auth/pages/Login";
 
 // Temporary Home/Dashboard component
 function HomePlaceholder() {
@@ -63,7 +41,7 @@ export default function App() {
         {/* Landing redirects to Register for testing */}
         <Route path="/" element={<HomePlaceholder />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/login" element={<LoginPlaceholder />} />
+        <Route path="/login" element={<Login />} />
         
         {/* Catch-all redirect */}
         <Route path="*" element={<Navigate to="/" replace />} />
@@ -71,3 +49,4 @@ export default function App() {
     </Router>
   );
 }
+

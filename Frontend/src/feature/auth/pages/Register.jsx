@@ -308,10 +308,16 @@ export default function Register() {
 
         {/* ══ RIGHT PANEL — FORM ══════════════════════════════════════ */}
         <div className="w-full md:w-[48%] flex flex-col justify-center items-center py-8 px-6 sm:px-10 md:overflow-y-auto md:h-full relative">
+          {/* Subtle background image for the form panel */}
+          <div className="absolute inset-0 z-0 opacity-[0.12] md:opacity-[0.08] pointer-events-none mix-blend-luminosity">
+            <img src="/fashion_bg.png" alt="background texture" className="w-full h-full object-cover" />
+          </div>
+          {/* Overlay to ensure text readability */}
+          <div className="absolute inset-0 bg-neutral-950/80 backdrop-blur-[2px] z-0" />
 
           {/* Ambient blobs */}
-          <div className="absolute top-1/3 right-1/3 w-72 h-72 rounded-full bg-white/[0.015] blur-[100px] pointer-events-none animate-pulse-slow" />
-          <div className="absolute bottom-1/4 left-1/4 w-96 h-96 rounded-full bg-neutral-900/20 blur-[130px] pointer-events-none" />
+          <div className="absolute top-1/3 right-1/3 w-72 h-72 rounded-full bg-white/[0.015] blur-[100px] pointer-events-none animate-pulse-slow z-0" />
+          <div className="absolute bottom-1/4 left-1/4 w-96 h-96 rounded-full bg-neutral-900/20 blur-[130px] pointer-events-none z-0" />
 
           <div className="w-full max-w-[360px] space-y-5 relative z-10">
 
