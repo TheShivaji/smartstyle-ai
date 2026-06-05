@@ -3,7 +3,7 @@ import User from "../models/auth.models.js";
 import {uploadFile} from "../service/storage.service.js";
 export const createProduct = async (req, res) => {
     try {
-        const { title, description, price } = req.body;
+        const { title, description, price, currency } = req.body;
 
 
         const images = await Promise.all(req.files.map(file => uploadFile(
@@ -13,7 +13,7 @@ export const createProduct = async (req, res) => {
             }
         )));
 
-        const user = await User.findById(req.user.id);
+        const user = await User.findById(req.user._id);
         if (!user) {
             return res.status(404).json({
                 success: false,
@@ -23,7 +23,10 @@ export const createProduct = async (req, res) => {
         const product = await Product.create({
             title,
             description,
-            price,
+            price:{
+                amount: price,
+                currency: currency || "INR"
+            },
             images,
             user: user._id,
         });
@@ -37,6 +40,23 @@ export const createProduct = async (req, res) => {
         res.status(500).json({
             success: false,
             message: "Error creating product",
+            error: error.message,
+        });
+    }
+}
+
+export const showAllProducts = async (req, res) => {
+    try {
+        const products = await Product.find({ user: req.user._id });
+        res.status(200).json({
+            success: true,
+            products,
+        });
+    } catch (error) {
+        console.log("Error in featchAllProducts controller: ", error);
+        res.status(500).json({
+            success: false,
+            message: "Error featching products",
             error: error.message,
         });
     }

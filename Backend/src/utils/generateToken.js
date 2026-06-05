@@ -12,6 +12,6 @@ export const generateToken = (user, res) => {
         secure: config.env !== "development",
         maxAge: 7 * 24 * 60 * 60 * 1000,
     });
-    
+
 }
 export default generateToken;

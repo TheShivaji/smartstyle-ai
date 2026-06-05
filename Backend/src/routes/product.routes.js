@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { protectedRoutes } from "../middlewares/auth.middleware.js";
-import { createProduct } from "../controllers/product.controller.js";
+import { createProduct , showAllProducts} from "../controllers/product.controller.js";
 import { isSeller } from "../middlewares/seller.middleware.js";
 import multer from "multer";
 
@@ -20,6 +20,7 @@ const upload = multer({
     }
 })
 
-productRoutes.post("/create", protectedRoutes, isSeller, upload.array("images", 7), createProduct);
+productRoutes.post("/create", upload.array("images", 7), protectedRoutes, isSeller, createProduct);
+productRoutes.get("/get-all-products", protectedRoutes, showAllProducts);
 
 export default productRoutes;
