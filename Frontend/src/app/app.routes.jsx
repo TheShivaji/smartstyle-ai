@@ -2,11 +2,12 @@ import { createBrowserRouter } from "react-router-dom";
 import Login from "../feature/auth/pages/Login.jsx";
 import Register from "../feature/auth/pages/Register.jsx";
 import CreateProduct from "../feature/product/pages/CreateProduct.jsx";
+import ShowProduct from "../feature/product/pages/ShowProduct.jsx";
 
 export const AppRouter = createBrowserRouter([
   {
     path: "/",
-    element: <h1>Welcome to Snitch</h1>,
+    element: <ShowProduct />,
   },
   {
     path: "/login",
@@ -23,5 +24,9 @@ export const AppRouter = createBrowserRouter([
   {
     path: "/product/create",
     element: <CreateProduct />,
+  },
+  {
+    path: "/product/show",
+    element: <ShowProduct />,
   },
 ]);
