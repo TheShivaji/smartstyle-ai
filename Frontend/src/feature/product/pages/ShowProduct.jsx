@@ -27,26 +27,16 @@ export default function ShowProduct() {
   
   // Select state from Redux
   const products = useSelector((state) => state.product.products) || [];
+  const loading = useSelector((state) => state.product.loading);
+  const error = useSelector((state) => state.product.error);
   const user = useSelector((state) => state.auth.user);
 
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState("newest"); // newest, priceAsc, priceDesc
   const [hoveredCardId, setHoveredCardId] = useState(null);
 
   useEffect(() => {
-    const fetchProducts = async () => {
-      setLoading(true);
-      setError("");
-      const response = await handleShowAllProducts();
-      if (!response || !response.success) {
-        setError("Failed to fetch products. Make sure you are authenticated.");
-      }
-      setLoading(false);
-    };
-
-    fetchProducts();
+    handleShowAllProducts();
   }, []);
 
   const formatPrice = (price, currency) => {

@@ -15,8 +15,14 @@ const productSlice = createSlice({
         showAllProducts: (state, action) => {
             state.products = action.payload;
         },
+        setLoading: (state, action) => {
+            state.loading = action.payload;
+        },
+        setError: (state, action) => {
+            state.error = action.payload;
+        },
     },
 });
 
-export const { createProduct, showAllProducts } = productSlice.actions;
+export const { createProduct, showAllProducts, setLoading, setError } = productSlice.actions;
 export default productSlice.reducer;

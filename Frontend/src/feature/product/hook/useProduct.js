@@ -1,10 +1,19 @@
 import {createProduct, showAllProducts} from "../services/product.api.js";
 import { useDispatch } from "react-redux";
-import { createProduct as createProductAction, showAllProducts as showAllProductsAction } from "../state/product.slice.js";
+import { 
+    createProduct as createProductAction, 
+    showAllProducts as showAllProductsAction,
+    setLoading,
+    setError 
+} from "../state/product.slice.js";
 import { toast } from "react-toastify";
+
 export const useProduct = () => {
     const dispatch = useDispatch();
+
     const handleCreateProduct = async (data) => {
+        dispatch(setLoading(true));
+        dispatch(setError(null));
         try {
             const response = await createProduct(data);
             dispatch(createProductAction(response.product));
@@ -12,21 +21,33 @@ export const useProduct = () => {
             return response;
         } catch (error) {
             console.error("Error creating product:", error);
-            toast.error(error.response?.data?.message || "Error creating product");
+            const errorMsg = error.response?.data?.message || "Error creating product";
+            dispatch(setError(errorMsg));
+            toast.error(errorMsg);
             return null;
+        } finally {
+            dispatch(setLoading(false));
         }
     };
+
     const handleShowAllProducts = async () => {
+        dispatch(setLoading(true));
+        dispatch(setError(null));
         try {
             const response = await showAllProducts();
             dispatch(showAllProductsAction(response.products));
             return response;
         } catch (error) {
             console.error("Error showing all products:", error);
-            toast.error(error.response?.data?.message || "Error loading products");
+            const errorMsg = error.response?.data?.message || "Error loading products";
+            dispatch(setError(errorMsg));
+            toast.error(errorMsg);
             return null;
+        } finally {
+            dispatch(setLoading(false));
         }
     };
+
     return {
         handleCreateProduct,
         handleShowAllProducts,
