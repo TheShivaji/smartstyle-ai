@@ -26,4 +26,14 @@ export const login = async (data) => {
         console.log("Error in login api: ", error);
         return error.response?.data || { success: false, message: error.message || "Network Error" };
     }
+};
+
+export const getMe = async () => {
+    try {
+        const response = await api.get("/me");
+        return response.data;
+    } catch (error) {
+        console.log("Error in getMe api: ", error);
+        return error.response?.data || { success: false, message: error.message || "Network Error" };
+    }
 };

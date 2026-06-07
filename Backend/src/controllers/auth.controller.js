@@ -7,21 +7,21 @@ export const signup = async (req, res) => {
     const { fullName, email, password, contactNumber, isSeller } = req.body;
     try {
         const existingUser = await User.findOne({
-            $or: [{ email }, { fullName }],
+            $or: [{ email }, { contactNumber }],
         });
-        if (existingUser.email === email) {
-            return res.status(400).json({
-                success: false,
-                message: "Email already exists",
-            });
-        }
-        if (existingUser.fullName === fullName) {
-            return res.status(400).json({
-                success: false,
-                message: "Full name already exists",
-            });
-        }
         if (existingUser) {
+            if (existingUser.email === email) {
+                return res.status(400).json({
+                    success: false,
+                    message: "Email already exists",
+                });
+            }
+            if (existingUser.contactNumber === contactNumber) {
+                return res.status(400).json({
+                    success: false,
+                    message: "Contact number already exists",
+                });
+            }
             return res.status(400).json({
                 success: false,
                 message: "User already exists",
@@ -43,6 +43,7 @@ export const signup = async (req, res) => {
             user: user.toObject(),
         });
     } catch (error) {
+        console.log("Error in signup controller: ", error.message);
         res.status(500).json({
             success: false,
             message: "Error creating user",
@@ -75,10 +76,32 @@ export const login = async (req, res) => {
             user: existingUser.toObject(),
         });
     } catch (error) {
-        console.log("Error in login controller: ", error);
+        console.log("Error in login controller: ", error.message);
         res.status(500).json({
             success: false,
             message: "Error logging in user",
+            error: error.message,
+        });
+    }
+};
+
+export const getMe = async (req, res) => {
+    try {
+        if (!req.user) {
+            return res.status(404).json({
+                success: false,
+                message: "User not found",
+            });
+        }
+        res.status(200).json({
+            success: true,
+            user: req.user,
+        });
+    } catch (error) {
+        console.log("Error in getMe controller: ", error.message);
+        res.status(500).json({
+            success: false,
+            message: "Error fetching user profile",
             error: error.message,
         });
     }

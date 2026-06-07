@@ -6,10 +6,12 @@ const authSlice = createSlice({
         user: null,
         error: null,
         loading: false,
+        isAuthChecked: false,
     },
     reducers: {
         setUser: (state, action) => {
             state.user = action.payload;
+            state.isAuthChecked = true;
         },
         setError: (state, action) => {
             state.error = action.payload;

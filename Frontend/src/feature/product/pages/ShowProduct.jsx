@@ -116,7 +116,7 @@ export default function ShowProduct() {
             </span>
           </div>
           <button
-            onClick={() => navigate("/product/create")}
+            onClick={() => navigate("/seller/product/create")}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white hover:bg-neutral-150 text-black font-mono text-[10px] font-bold tracking-wider transition-all duration-300 cursor-pointer"
           >
             <Plus className="h-3.5 w-3.5 stroke-[2]" />
@@ -215,7 +215,7 @@ export default function ShowProduct() {
                 Start listing your editorial creations, custom fits, and luxury apparel sets. All products uploaded by you will display here.
               </p>
               <button
-                onClick={() => navigate("/product/create")}
+                onClick={() => navigate("/seller/product/create")}
                 className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-white hover:bg-neutral-200 text-black font-bold font-mono text-xs tracking-wider transition-all cursor-pointer"
               >
                 CREATE FIRST PRODUCT &rarr;

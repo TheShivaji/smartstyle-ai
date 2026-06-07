@@ -55,17 +55,19 @@ export default function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setTouched({ email: true, password: true });
-    const invalid =
-      !formData.email ||
-      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email) ||
-      !formData.password ||
-      formData.password.length < 6;
-    if (invalid) return;
-    const res = await login(formData);
-    if (res?.success) {
-      setIsSuccess(true);
-      setTimeout(() => navigate("/"), 2000);
+    try {
+      const user = await login(formData);
+      if (user?.success) {
+        const role = user.user.role?.toLowerCase();
+        if (role === "seller") {
+          navigate("/seller/product/show");
+        } else if (role === "buyer") {
+          navigate("/");
+        }
+      }
+      console.log(user);
+    } catch (error) {
+      console.log(error);
     }
   };
 

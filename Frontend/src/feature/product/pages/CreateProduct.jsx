@@ -363,7 +363,7 @@ export default function CreateProduct() {
                         min="1"
                         className="w-full bg-[#141414] border border-neutral-800 focus:border-neutral-500 rounded-xl py-2.5 pl-8 pr-3.5 text-xs text-white placeholder-neutral-600 focus:outline-none focus:ring-1 focus:ring-neutral-700 transition-all font-mono"
                         required
-                      />
+                      />  
                     </div>
                   </div>
                 </div>
