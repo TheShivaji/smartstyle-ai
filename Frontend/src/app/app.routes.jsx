@@ -5,6 +5,7 @@ import CreateProduct from "../feature/product/pages/CreateProduct.jsx";
 import ShowProduct from "../feature/product/pages/ShowProduct.jsx";
 import Protected from "../feature/product/components/Protected.jsx";
 import Unauthorized from "../feature/auth/pages/Unauthorized.jsx";
+import Public from "../feature/product/components/Public.jsx";
 
 export const AppRouter = createBrowserRouter([
   {
@@ -13,15 +14,15 @@ export const AppRouter = createBrowserRouter([
   },
   {
     path: "/login",
-    element: <Login />,
+    element: <Public><Login /></Public>,
   },
   {
     path: "/signup",
-    element: <Register />,
+    element: <Public><Register /></Public>,
   },
   {
     path: "/register",
-    element: <Register />,
+    element: <Public><Register /></Public>,
   },
   {
     path: "/unauthorized",
