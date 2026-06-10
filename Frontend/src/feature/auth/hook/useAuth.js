@@ -1,5 +1,5 @@
 import { useDispatch } from "react-redux";
-import { singup as signupApi, login as loginApi, getMe as getMeApi } from "../services/auth.api";
+import { singup as signupApi, login as loginApi, getMe as getMeApi, logout as logoutApi } from "../services/auth.api";
 import { setUser, setError, setLoading } from "../state/auth.slice";
 
 export const useAuth = () => {
@@ -63,7 +63,27 @@ export const useAuth = () => {
         }
     };
 
-    return { signup: handleSignup, login: handleLogin, checkAuth };
+    const handleLogout = async () => {
+        dispatch(setLoading(true));
+        dispatch(setError(null));
+        try {
+            const response = await logoutApi();
+            if (response.success) {
+                dispatch(setUser(null));
+            } else {
+                dispatch(setError(response.message || "Logout failed"));
+            }
+            return response;
+        } catch (error) {
+            const errorMsg = error.message || "An unexpected error occurred";
+            dispatch(setError(errorMsg));
+            return { success: false, message: errorMsg };
+        } finally {
+            dispatch(setLoading(false));
+        }
+    };
+
+    return { signup: handleSignup, login: handleLogin, checkAuth, logout: handleLogout };
 };
 
 

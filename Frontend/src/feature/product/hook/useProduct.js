@@ -1,8 +1,9 @@
-import {createProduct, showAllProducts} from "../services/product.api.js";
+import {createProduct, showAllProducts , showAllProductsForBuyer, showProductById} from "../services/product.api.js";
 import { useDispatch } from "react-redux";
 import { 
     createProduct as createProductAction, 
     showAllProducts as showAllProductsAction,
+    setSelectedProduct as setSelectedProductAction,
     setLoading,
     setError 
 } from "../state/product.slice.js";
@@ -48,8 +49,46 @@ export const useProduct = () => {
         }
     };
 
+    const handleShowAllProductsForBuyer = async () => {
+        dispatch(setLoading(true));
+        dispatch(setError(null));
+        try {
+            const response = await showAllProductsForBuyer();
+            dispatch(showAllProductsAction(response.products));
+            return response;
+        } catch (error) {
+            console.error("Error showing all products:", error);
+            const errorMsg = error.response?.data?.message || "Error loading products";
+            dispatch(setError(errorMsg));
+            toast.error(errorMsg);
+            return null;
+        } finally {
+            dispatch(setLoading(false));
+        }
+    };
+
+    const handleShowProductById = async (id) => {
+        dispatch(setLoading(true));
+        dispatch(setError(null));
+        try {
+            const response = await showProductById(id);
+            dispatch(setSelectedProductAction(response.product));
+            return response;
+        } catch (error) {
+            console.error("Error fetching product details:", error);
+            const errorMsg = error.response?.data?.message || "Error loading product details";
+            dispatch(setError(errorMsg));
+            toast.error(errorMsg);
+            return null;
+        } finally {
+            dispatch(setLoading(false));
+        }
+    };
+    
     return {
         handleCreateProduct,
         handleShowAllProducts,
+        handleShowAllProductsForBuyer,
+        handleShowProductById,
     };
 };

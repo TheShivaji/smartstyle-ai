@@ -106,3 +106,25 @@ export const getMe = async (req, res) => {
         });
     }
 };
+
+export const logout = async (req, res) => {
+    try {
+        res.cookie("jwt", "", {
+            maxAge: 0,
+            httpOnly: true,
+            sameSite: "strict",
+            secure: process.env.NODE_ENV !== "development",
+        });
+        res.status(200).json({
+            success: true,
+            message: "User logged out successfully",
+        });
+    } catch (error) {
+        console.log("Error in logout controller: ", error.message);
+        res.status(500).json({
+            success: false,
+            message: "Error logging out user",
+            error: error.message,
+        });
+    }
+};

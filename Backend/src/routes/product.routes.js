@@ -1,7 +1,8 @@
 import { Router } from "express";
 import { protectedRoutes } from "../middlewares/auth.middleware.js";
-import { createProduct , showAllProducts} from "../controllers/product.controller.js";
-import { isSeller } from "../middlewares/seller.middleware.js";
+import { createProduct , showAllProducts, getProductDetails , showAllProductsForBuyer} from "../controllers/product.controller.js";
+import { isSeller } from "../middlewares/seller.middleware.js"
+
 import multer from "multer";
 
 const productRoutes = Router();
@@ -19,8 +20,19 @@ const upload = multer({
         }
     }
 })
-
+/**
+ @These routes are for sellers only 
+ @protectedRoutes allows only authenticated users to access these routes
+ @isSeller allows only sellers to access these routes
+ */
 productRoutes.post("/create", upload.array("images", 7), protectedRoutes, isSeller, createProduct);
-productRoutes.get("/get-all-products", protectedRoutes, showAllProducts);
+productRoutes.get("/get-all-products", protectedRoutes , isSeller ,  showAllProducts);
+
+/**
+ @These routes are for buyers only 
+ @protectedRoutes allows only authenticated users to access these routes
+ */
+productRoutes.get("/get-all-products-buyer", protectedRoutes ,  showAllProductsForBuyer);
+productRoutes.get("/details/:id", protectedRoutes, getProductDetails);
 
 export default productRoutes;

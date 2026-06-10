@@ -62,7 +62,7 @@ export default function Login() {
         if (role === "seller") {
           navigate("/seller/product/show");
         } else if (role === "buyer") {
-          navigate("/");
+          navigate("/showallproduct");
         }
       }
       console.log(user);

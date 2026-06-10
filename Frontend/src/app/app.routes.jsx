@@ -3,14 +3,17 @@ import Login from "../feature/auth/pages/Login.jsx";
 import Register from "../feature/auth/pages/Register.jsx";
 import CreateProduct from "../feature/product/pages/CreateProduct.jsx";
 import ShowProduct from "../feature/product/pages/ShowProduct.jsx";
+import ProductDetail from "../feature/product/pages/ProductDetail.jsx";
 import Protected from "../feature/product/components/Protected.jsx";
 import Unauthorized from "../feature/auth/pages/Unauthorized.jsx";
 import Public from "../feature/product/components/Public.jsx";
+import ShowAllProductForBuyer from "../feature/product/pages/ShowAllProductForBuyer.jsx";
+import ProtectedBuyer from "../feature/product/components/ProtectedBuyer.jsx";
 
 export const AppRouter = createBrowserRouter([
   {
     path: "/",
-    element: <h1>hello</h1>,
+    element: <Public><Login /></Public>,
   },
   {
     path: "/login",
@@ -29,6 +32,15 @@ export const AppRouter = createBrowserRouter([
     element: <Unauthorized />,
   },
   {
+    path: "/product/details/:id",
+    element: <ProtectedBuyer><ProductDetail /></ProtectedBuyer>,
+  },
+  {
+    path : "/showallproduct",
+    element : <ProtectedBuyer><ShowAllProductForBuyer /></ProtectedBuyer>
+  },
+
+  {
     path: "/seller",
     children: [
       {
@@ -39,6 +51,7 @@ export const AppRouter = createBrowserRouter([
         path: "/seller/product/show",
         element: <Protected><ShowProduct /></Protected>,
       },
+
     ]
   },
   {

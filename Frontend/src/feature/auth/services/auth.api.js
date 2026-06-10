@@ -36,4 +36,14 @@ export const getMe = async () => {
         console.log("Error in getMe api: ", error);
         return error.response?.data || { success: false, message: error.message || "Network Error" };
     }
+};
+
+export const logout = async () => {
+    try {
+        const response = await api.post("/logout");
+        return response.data;
+    } catch (error) {
+        console.log("Error in logout api: ", error);
+        return error.response?.data || { success: false, message: error.message || "Network Error" };
+    }
 };

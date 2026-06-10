@@ -12,3 +12,13 @@ export const showAllProducts = async (data) => {
     const response = await api.get("/get-all-products", data);
     return response.data;
 }
+
+export const showAllProductsForBuyer = async (data) => {
+    const response = await api.get("/get-all-products-buyer", data);
+    return response.data;
+}
+
+export const showProductById = async (id) => {
+    const response = await api.get(`/details/${id}`);
+    return response.data;
+}

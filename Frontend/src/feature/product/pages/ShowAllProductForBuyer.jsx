@@ -4,14 +4,12 @@ import { useNavigate } from "react-router-dom";
 import { useProduct } from "../hook/useProduct";
 import {
   ShoppingBag,
-  Plus,
   Loader2,
   AlertCircle,
   Search,
   SlidersHorizontal,
   FolderKanban,
   Image as ImageIcon,
-  ArrowRight,
   LogOut
 } from "lucide-react";
 import { useAuth } from "../../auth/hook/useAuth";
@@ -23,8 +21,8 @@ const currencySymbols = {
   GBP: "£",
 };
 
-export default function ShowProduct() {
-  const { handleShowAllProducts } = useProduct();
+export default function ShowAllProductForBuyer() {
+  const { handleShowAllProductsForBuyer } = useProduct();
   const { logout } = useAuth();
   const navigate = useNavigate();
 
@@ -44,7 +42,7 @@ export default function ShowProduct() {
   const [hoveredCardId, setHoveredCardId] = useState(null);
 
   useEffect(() => {
-    handleShowAllProducts();
+    handleShowAllProductsForBuyer();
   }, []);
 
   const formatPrice = (price, currency) => {
@@ -101,13 +99,6 @@ export default function ShowProduct() {
         .animate-slide-up {
           animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
-        .no-scrollbar::-webkit-scrollbar {
-          display: none;
-        }
-        .no-scrollbar {
-          -ms-overflow-style: none;
-          scrollbar-width: none;
-        }
       `}</style>
 
       <div className="snitch-catalog-page min-h-screen bg-neutral-950 text-neutral-200 relative overflow-x-hidden grain flex flex-col p-4 sm:p-6 lg:p-8">
@@ -120,23 +111,21 @@ export default function ShowProduct() {
           <div className="flex items-center gap-2">
             <ShoppingBag className="h-4 w-4 stroke-[1.5] text-neutral-300" />
             <span className="font-mono text-xs font-bold tracking-[0.4em] uppercase text-white">
-              SNITCH STUDIO
+              SNITCH COLLECTION
             </span>
           </div>
           <div className="flex items-center gap-3">
+            {user && (
+              <span className="font-mono text-[10px] tracking-wider text-neutral-400">
+                HELLO, {user.name?.toUpperCase() || "BUYER"}
+              </span>
+            )}
             <button
               onClick={handleLogoutClick}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-neutral-850 hover:border-neutral-700 bg-transparent text-neutral-400 hover:text-white font-mono text-[9px] font-bold tracking-wider transition-all duration-300 cursor-pointer"
             >
               <LogOut className="h-3 w-3" />
               LOGOUT
-            </button>
-            <button
-              onClick={() => navigate("/seller/product/create")}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white hover:bg-neutral-150 text-black font-mono text-[10px] font-bold tracking-wider transition-all duration-300 cursor-pointer"
-            >
-              <Plus className="h-3.5 w-3.5 stroke-[2]" />
-              CREATE PRODUCT
             </button>
           </div>
         </header>
@@ -147,12 +136,12 @@ export default function ShowProduct() {
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 pb-6 border-b border-neutral-900">
             <div className="space-y-1">
               <h1 className="text-3xl sm:text-4xl font-light font-serif text-white tracking-wide">
-                The Catalog
+                All Products
               </h1>
               <p className="text-xs font-light text-neutral-400">
                 {products.length === 0 
-                  ? "Build and curate your fashion catalog items." 
-                  : `Showing ${sortedProducts.length} of ${products.length} curated design pieces.`}
+                  ? "Explore the latest curated fashion items." 
+                  : `Showing ${sortedProducts.length} of ${products.length} exclusive design pieces.`}
               </p>
             </div>
           </div>
@@ -227,16 +216,10 @@ export default function ShowProduct() {
               <div className="p-4 rounded-full bg-neutral-900 border border-neutral-800 mb-4">
                 <FolderKanban className="h-8 w-8 text-neutral-400 stroke-[1.25]" />
               </div>
-              <h3 className="text-lg font-serif font-light text-white mb-1.5">No products in your catalog</h3>
-              <p className="text-xs text-neutral-500 font-light max-w-sm leading-relaxed mb-6">
-                Start listing your editorial creations, custom fits, and luxury apparel sets. All products uploaded by you will display here.
+              <h3 className="text-lg font-serif font-light text-white mb-1.5">No products available</h3>
+              <p className="text-xs text-neutral-500 font-light max-w-sm leading-relaxed">
+                Check back later for curated fashion pieces, editorial designs, and new season wardrobe items.
               </p>
-              <button
-                onClick={() => navigate("/seller/product/create")}
-                className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-white hover:bg-neutral-200 text-black font-bold font-mono text-xs tracking-wider transition-all cursor-pointer"
-              >
-                CREATE FIRST PRODUCT &rarr;
-              </button>
             </div>
           ) : (
             /* Products Grid */
@@ -250,9 +233,10 @@ export default function ShowProduct() {
                 return (
                   <div
                     key={p._id}
-                    className="flex flex-col group"
+                    className="flex flex-col group cursor-pointer"
                     onMouseEnter={() => setHoveredCardId(p._id)}
                     onMouseLeave={() => setHoveredCardId(null)}
+                    onClick={() => navigate(`/product/details/${p._id}`)}
                   >
                     {/* Image Container */}
                     <div className="relative aspect-[3/4] rounded-2xl overflow-hidden border border-neutral-900 bg-[#0c0c0c] mb-4">

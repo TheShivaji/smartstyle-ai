@@ -47,7 +47,9 @@ export const createProduct = async (req, res) => {
 
 export const showAllProducts = async (req, res) => {
     try {
-        const products = await Product.find({ user: req.user._id });
+        const products = await Product.find({
+            user: req.user._id
+        });
         res.status(200).json({
             success: true,
             products,
@@ -61,4 +63,44 @@ export const showAllProducts = async (req, res) => {
         });
     }
 }
+export const showAllProductsForBuyer = async (req, res) => {
+    try {
+        const products = await Product.find();
+        res.status(200).json({
+            success: true,
+            products,
+        });
+    } catch (error) {
+        console.log("Error in featchAllProducts controller: ", error);
+        res.status(500).json({
+            success: false,
+            message: "Error featching products",
+            error: error.message,
+        });
+    }
+}
+export const getProductDetails = async (req, res) => {
+    const { id } = req.params;
+    try {
+        const product = await Product.findById(id);
+        
+        if(!product){
+            return res.status(404).json({
+                success: false,
+                message: "Product not found",
+            });
+        }
 
+        res.status(200).json({
+            success: true,
+            product,
+        });
+    } catch (error) {
+        console.log("Error in getProductDetails controller: ", error);
+        res.status(500).json({
+            success: false,
+            message: "Error fetching product details",
+            error: error.message,
+        });
+    }
+}
