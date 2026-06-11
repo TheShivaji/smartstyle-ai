@@ -79,6 +79,71 @@ export const showAllProductsForBuyer = async (req, res) => {
         });
     }
 }
+export const addVariants = async (req , res) => {
+    try{
+        const {productId} = req.params;
+        const product = await Product.findOne({
+            _id: productId,
+            user: req.user._id
+        })
+        if(!product){
+            return res.status(404).json({
+                success: false,
+                message: "Product not found",
+            });
+        }
+
+        const files = req.files;
+        let variantImages = [];
+
+        if(files && files.length !== 0){
+            (await Promise.all(files.map(async (file) => {
+                const images = await uploadFile({
+                    buffer: file.buffer,
+                    fileName: file.originalname
+                })
+                return images
+                
+            }))).map(images => variantImages.push(images))
+        }
+
+        const price = req.body.priceAmount
+        const stock = req.body.stock
+        const attributes = JSON.parse(req.body.attributes || '{}');
+
+        product.variants.push({
+            images: variantImages,
+            price: {
+                amount: Number(price)|| product.price.amount,
+                currency: product.price.currency,
+            },
+            stock: stock,
+            attributes: attributes,
+        })
+        await product.save();
+
+        res.status(200).json({
+            success: true,
+            message: "Variant added successfully",
+            product,
+        });
+
+        console.log("variantImages", variantImages)
+        console.log("product", product)
+        console.log("req", req.user)
+        
+        
+
+        
+    }catch(error){
+        console.log("Error in addVariants controller: ", error);
+        res.status(500).json({
+            success: false,
+            message: "Error adding variants",
+            error: error.message,
+        });
+    }
+}
 export const getProductDetails = async (req, res) => {
     const { id } = req.params;
     try {

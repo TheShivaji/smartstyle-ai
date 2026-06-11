@@ -12,7 +12,9 @@ import {
   FolderKanban,
   Image as ImageIcon,
   ArrowRight,
-  LogOut
+  LogOut,
+  X,
+  Trash2,
 } from "lucide-react";
 import { useAuth } from "../../auth/hook/useAuth";
 
@@ -32,7 +34,7 @@ export default function ShowProduct() {
     await logout();
     navigate("/login");
   };
-  
+
   // Select state from Redux
   const products = useSelector((state) => state.product.products) || [];
   const loading = useSelector((state) => state.product.loading);
@@ -54,14 +56,16 @@ export default function ShowProduct() {
   };
 
   // Filter & Sort logic
-  const filteredProducts = (Array.isArray(products) ? products : []).filter((p) => {
-    const query = searchQuery.toLowerCase().trim();
-    if (!query) return true;
-    return (
-      p.title?.toLowerCase().includes(query) ||
-      p.description?.toLowerCase().includes(query)
-    );
-  });
+  const filteredProducts = (Array.isArray(products) ? products : []).filter(
+    (p) => {
+      const query = searchQuery.toLowerCase().trim();
+      if (!query) return true;
+      return (
+        p.title?.toLowerCase().includes(query) ||
+        p.description?.toLowerCase().includes(query)
+      );
+    },
+  );
 
   const sortedProducts = [...filteredProducts].sort((a, b) => {
     const priceA = Number(a.price?.amount || a.price || 0);
@@ -150,8 +154,8 @@ export default function ShowProduct() {
                 The Catalog
               </h1>
               <p className="text-xs font-light text-neutral-400">
-                {products.length === 0 
-                  ? "Build and curate your fashion catalog items." 
+                {products.length === 0
+                  ? "Build and curate your fashion catalog items."
                   : `Showing ${sortedProducts.length} of ${products.length} curated design pieces.`}
               </p>
             </div>
@@ -162,9 +166,11 @@ export default function ShowProduct() {
             <div className="mt-4 p-4 rounded-xl bg-red-950/20 border border-red-900/40 flex items-start gap-3 text-red-300 text-xs">
               <AlertCircle className="h-4 w-4 text-red-400 shrink-0 mt-0.5" />
               <div>
-                <span className="font-semibold font-mono text-[10px] tracking-wider uppercase">Connection Error</span>
+                <span className="font-semibold font-mono text-[10px] tracking-wider uppercase">
+                  Connection Error
+                </span>
                 <p className="font-light text-red-300/80 mt-0.5">{error}</p>
-                <button 
+                <button
                   onClick={() => navigate("/login")}
                   className="mt-2 text-white underline hover:no-underline font-mono text-[10px]"
                 >
@@ -227,9 +233,12 @@ export default function ShowProduct() {
               <div className="p-4 rounded-full bg-neutral-900 border border-neutral-800 mb-4">
                 <FolderKanban className="h-8 w-8 text-neutral-400 stroke-[1.25]" />
               </div>
-              <h3 className="text-lg font-serif font-light text-white mb-1.5">No products in your catalog</h3>
+              <h3 className="text-lg font-serif font-light text-white mb-1.5">
+                No products in your catalog
+              </h3>
               <p className="text-xs text-neutral-500 font-light max-w-sm leading-relaxed mb-6">
-                Start listing your editorial creations, custom fits, and luxury apparel sets. All products uploaded by you will display here.
+                Start listing your editorial creations, custom fits, and luxury
+                apparel sets. All products uploaded by you will display here.
               </p>
               <button
                 onClick={() => navigate("/seller/product/create")}
@@ -243,14 +252,15 @@ export default function ShowProduct() {
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-6 gap-y-10">
               {sortedProducts.map((p) => {
                 const hasSecondImage = p.images && p.images.length > 1;
-                const activeImage = (hoveredCardId === p._id && hasSecondImage) 
-                  ? p.images[1]?.url 
-                  : p.images[0]?.url;
+                const activeImage =
+                  hoveredCardId === p._id && hasSecondImage
+                    ? p.images[1]?.url
+                    : p.images[0]?.url;
 
                 return (
                   <div
                     key={p._id}
-                    className="flex flex-col group"
+                    className="flex flex-col group cursor-pointer"
                     onMouseEnter={() => setHoveredCardId(p._id)}
                     onMouseLeave={() => setHoveredCardId(null)}
                   >
@@ -266,10 +276,12 @@ export default function ShowProduct() {
                       ) : (
                         <div className="w-full h-full flex flex-col items-center justify-center text-neutral-600 gap-2">
                           <ImageIcon className="h-6 w-6 stroke-[1.25]" />
-                          <span className="text-[10px] font-mono tracking-widest uppercase">No Image</span>
+                          <span className="text-[10px] font-mono tracking-widest uppercase">
+                            No Image
+                          </span>
                         </div>
                       )}
-                      
+
                       {/* Image count badge */}
                       {p.images && p.images.length > 1 && (
                         <div className="absolute bottom-3 right-3 px-2 py-0.5 rounded-md bg-black/60 backdrop-blur-md border border-neutral-850 text-[9px] font-mono text-neutral-300">
@@ -284,7 +296,10 @@ export default function ShowProduct() {
                         {/* Price & Currency */}
                         <div className="flex justify-between items-baseline mb-1">
                           <span className="font-mono text-sm text-white font-semibold">
-                            {formatPrice(p.price, p.price?.currency || p.currency)}
+                            {formatPrice(
+                              p.price,
+                              p.price?.currency || p.currency,
+                            )}
                           </span>
                         </div>
 
@@ -298,6 +313,17 @@ export default function ShowProduct() {
                           {p.description}
                         </p>
                       </div>
+
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigate(`/seller/product/manage/${p._id}`);
+                        }}
+                        className="mt-3 w-full flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl border border-neutral-850 hover:border-neutral-700 bg-neutral-900/40 hover:bg-neutral-900 text-neutral-300 hover:text-white font-mono text-[9px] font-bold tracking-wider transition-all cursor-pointer"
+                      >
+                        <Plus className="h-3 w-3" />
+                        MANAGE VARIANTS
+                      </button>
                     </div>
                   </div>
                 );

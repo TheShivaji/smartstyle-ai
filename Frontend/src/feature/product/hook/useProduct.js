@@ -1,7 +1,8 @@
-import {createProduct, showAllProducts , showAllProductsForBuyer, showProductById} from "../services/product.api.js";
+import {createProduct, showAllProducts , showAllProductsForBuyer, showProductById, addVariants} from "../services/product.api.js";
 import { useDispatch } from "react-redux";
 import { 
     createProduct as createProductAction, 
+    updateProduct as updateProductAction,
     showAllProducts as showAllProductsAction,
     setSelectedProduct as setSelectedProductAction,
     setLoading,
@@ -84,11 +85,31 @@ export const useProduct = () => {
             dispatch(setLoading(false));
         }
     };
+
+    const handleAddVariants = async (productId , newVariants) => {
+        dispatch(setLoading(true));
+        dispatch(setError(null));
+        try {
+            const response = await addVariants(productId , newVariants);
+            dispatch(updateProductAction(response.product));
+            toast.success(response.message);
+            return response;
+        } catch (error) {
+            console.error("Error adding variants:", error);
+            const errorMsg = error.response?.data?.message || "Error adding variants";
+            dispatch(setError(errorMsg));
+            toast.error(errorMsg);
+            return null;
+        } finally {
+            dispatch(setLoading(false));
+        }
+    };
     
     return {
         handleCreateProduct,
         handleShowAllProducts,
         handleShowAllProductsForBuyer,
         handleShowProductById,
+        handleAddVariants,
     };
 };

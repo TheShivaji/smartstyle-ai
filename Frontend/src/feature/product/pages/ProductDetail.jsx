@@ -11,7 +11,7 @@ import {
   Check,
   Shield,
   Truck,
-  RotateCcw
+  RotateCcw,
 } from "lucide-react";
 
 const currencySymbols = {
@@ -66,7 +66,9 @@ export default function ProductDetail() {
         <div className="p-4 rounded-full bg-red-950/20 border border-red-900/30 text-red-400 mb-4">
           <AlertCircle className="h-8 w-8 stroke-[1.25]" />
         </div>
-        <h3 className="text-lg font-serif font-light text-white mb-2">Error Loading Product</h3>
+        <h3 className="text-lg font-serif font-light text-white mb-2">
+          Error Loading Product
+        </h3>
         <p className="text-xs text-neutral-500 max-w-sm mb-6">{error}</p>
         <button
           onClick={() => navigate("/showallproduct")}
@@ -81,8 +83,12 @@ export default function ProductDetail() {
   if (!product) {
     return (
       <div className="min-h-screen bg-neutral-950 text-neutral-200 flex flex-col items-center justify-center p-6 text-center">
-        <h3 className="text-lg font-serif font-light text-white mb-2">Product Not Found</h3>
-        <p className="text-xs text-neutral-500 max-w-sm mb-6">The product you are looking for does not exist or has been removed.</p>
+        <h3 className="text-lg font-serif font-light text-white mb-2">
+          Product Not Found
+        </h3>
+        <p className="text-xs text-neutral-500 max-w-sm mb-6">
+          The product you are looking for does not exist or has been removed.
+        </p>
         <button
           onClick={() => navigate("/showallproduct")}
           className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-white hover:bg-neutral-200 text-black font-bold font-mono text-xs tracking-wider transition-all cursor-pointer"
@@ -144,7 +150,6 @@ export default function ProductDetail() {
 
         {/* Product Details Grid */}
         <main className="flex-1 max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 mt-6 lg:mt-8 z-10 animate-slide-up lg:min-h-0 lg:h-full lg:pb-4">
-          
           {/* Left Column: Images */}
           <div className="lg:col-span-7 flex flex-col gap-4 lg:h-full lg:min-h-0">
             {/* Main Image Container */}
@@ -158,7 +163,9 @@ export default function ProductDetail() {
               ) : (
                 <div className="w-full h-full flex flex-col items-center justify-center text-neutral-600 gap-2">
                   <ImageIcon className="h-10 w-10 stroke-[1.25]" />
-                  <span className="text-[10px] font-mono tracking-widest uppercase">No Image Available</span>
+                  <span className="text-[10px] font-mono tracking-widest uppercase">
+                    No Image Available
+                  </span>
                 </div>
               )}
             </div>
@@ -171,10 +178,16 @@ export default function ProductDetail() {
                     key={idx}
                     onClick={() => setActiveImageIndex(idx)}
                     className={`relative w-20 aspect-[3/4] rounded-lg overflow-hidden border transition-all shrink-0 ${
-                      activeImageIndex === idx ? "border-white" : "border-neutral-800 opacity-60 hover:opacity-100"
+                      activeImageIndex === idx
+                        ? "border-white"
+                        : "border-neutral-800 opacity-60 hover:opacity-100"
                     }`}
                   >
-                    <img src={img.url} alt={`thumbnail-${idx}`} className="w-full h-full object-cover" />
+                    <img
+                      src={img.url}
+                      alt={`thumbnail-${idx}`}
+                      className="w-full h-full object-cover"
+                    />
                   </button>
                 ))}
               </div>
@@ -193,7 +206,10 @@ export default function ProductDetail() {
                   {product.title}
                 </h1>
                 <div className="text-xl font-mono text-white font-semibold pt-1">
-                  {formatPrice(product.price, product.price?.currency || product.currency)}
+                  {formatPrice(
+                    product.price,
+                    product.price?.currency || product.currency,
+                  )}
                 </div>
               </div>
 
@@ -205,7 +221,8 @@ export default function ProductDetail() {
                   Details & Fit
                 </h4>
                 <p className="text-xs text-neutral-400 font-light leading-relaxed">
-                  {product.description || "No description provided for this exclusive curated item."}
+                  {product.description ||
+                    "No description provided for this exclusive curated item."}
                 </p>
               </div>
 
@@ -217,7 +234,9 @@ export default function ProductDetail() {
                   <h4 className="text-[10px] font-mono tracking-[0.2em] text-neutral-400 uppercase">
                     Select Size
                   </h4>
-                  <span className="text-[9px] text-neutral-500 underline cursor-pointer">Size Guide</span>
+                  <span className="text-[9px] text-neutral-500 underline cursor-pointer">
+                    Size Guide
+                  </span>
                 </div>
                 <div className="flex flex-wrap gap-2.5">
                   {["S", "M", "L", "XL", "XXL"].map((size) => (
@@ -263,20 +282,24 @@ export default function ProductDetail() {
             <div className="grid grid-cols-3 gap-4 pt-8 border-t border-neutral-900 mt-8 text-center text-neutral-500">
               <div className="flex flex-col items-center gap-1">
                 <Truck className="h-4 w-4 stroke-[1.25]" />
-                <span className="text-[9px] tracking-wide font-mono uppercase">FAST SHIPPING</span>
+                <span className="text-[9px] tracking-wide font-mono uppercase">
+                  FAST SHIPPING
+                </span>
               </div>
               <div className="flex flex-col items-center gap-1">
                 <RotateCcw className="h-4 w-4 stroke-[1.25]" />
-                <span className="text-[9px] tracking-wide font-mono uppercase">EASY RETURNS</span>
+                <span className="text-[9px] tracking-wide font-mono uppercase">
+                  EASY RETURNS
+                </span>
               </div>
               <div className="flex flex-col items-center gap-1">
                 <Shield className="h-4 w-4 stroke-[1.25]" />
-                <span className="text-[9px] tracking-wide font-mono uppercase">SECURE SEC</span>
+                <span className="text-[9px] tracking-wide font-mono uppercase">
+                  SECURE SEC
+                </span>
               </div>
             </div>
-
           </div>
-
         </main>
       </div>
     </>

@@ -22,3 +22,17 @@ export const showProductById = async (id) => {
     const response = await api.get(`/details/${id}`);
     return response.data;
 }
+
+export const addVariants = async(productId , newVariants) =>{
+    const formData = new FormData()
+
+    newVariants.images.forEach((image) => {
+        formData.append("images", image.file);
+    });
+    formData.append("stock", newVariants.stock)
+    formData.append("priceAmount", newVariants.price)
+    formData.append("attributes", JSON.stringify(newVariants.attributes))
+
+    const response = await api.post(`/add-variants/${productId}`, formData);
+    return response.data;
+}

@@ -3,6 +3,7 @@ import Login from "../feature/auth/pages/Login.jsx";
 import Register from "../feature/auth/pages/Register.jsx";
 import CreateProduct from "../feature/product/pages/CreateProduct.jsx";
 import ShowProduct from "../feature/product/pages/ShowProduct.jsx";
+import MangeProduct from "../feature/product/pages/MangeProduct.jsx";
 import ProductDetail from "../feature/product/pages/ProductDetail.jsx";
 import Protected from "../feature/product/components/Protected.jsx";
 import Unauthorized from "../feature/auth/pages/Unauthorized.jsx";
@@ -13,19 +14,35 @@ import ProtectedBuyer from "../feature/product/components/ProtectedBuyer.jsx";
 export const AppRouter = createBrowserRouter([
   {
     path: "/",
-    element: <Public><Login /></Public>,
+    element: (
+      <Public>
+        <Login />
+      </Public>
+    ),
   },
   {
     path: "/login",
-    element: <Public><Login /></Public>,
+    element: (
+      <Public>
+        <Login />
+      </Public>
+    ),
   },
   {
     path: "/signup",
-    element: <Public><Register /></Public>,
+    element: (
+      <Public>
+        <Register />
+      </Public>
+    ),
   },
   {
     path: "/register",
-    element: <Public><Register /></Public>,
+    element: (
+      <Public>
+        <Register />
+      </Public>
+    ),
   },
   {
     path: "/unauthorized",
@@ -33,11 +50,19 @@ export const AppRouter = createBrowserRouter([
   },
   {
     path: "/product/details/:id",
-    element: <ProtectedBuyer><ProductDetail /></ProtectedBuyer>,
+    element: (
+      <ProtectedBuyer>
+        <ProductDetail />
+      </ProtectedBuyer>
+    ),
   },
   {
-    path : "/showallproduct",
-    element : <ProtectedBuyer><ShowAllProductForBuyer /></ProtectedBuyer>
+    path: "/showallproduct",
+    element: (
+      <ProtectedBuyer>
+        <ShowAllProductForBuyer />
+      </ProtectedBuyer>
+    ),
   },
 
   {
@@ -45,14 +70,29 @@ export const AppRouter = createBrowserRouter([
     children: [
       {
         path: "/seller/product/create",
-        element: <Protected><CreateProduct /></Protected>,
+        element: (
+          <Protected>
+            <CreateProduct />
+          </Protected>
+        ),
       },
       {
         path: "/seller/product/show",
-        element: <Protected><ShowProduct /></Protected>,
+        element: (
+          <Protected>
+            <ShowProduct />
+          </Protected>
+        ),
       },
-
-    ]
+      {
+        path: "/seller/product/manage/:productId",
+        element: (
+          <Protected>
+            <MangeProduct />
+          </Protected>
+        ),
+      },
+    ],
   },
   {
     path: "/product/show",

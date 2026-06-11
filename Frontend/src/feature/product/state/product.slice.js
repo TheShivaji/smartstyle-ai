@@ -13,6 +13,17 @@ const productSlice = createSlice({
         createProduct: (state, action) => {
             state.products.push(action.payload);
         },
+        updateProduct: (state, action) => {
+            const index = state.products.findIndex((p) => p._id === action.payload._id);
+            if (index !== -1) {
+                state.products[index] = action.payload;
+            } else {
+                state.products.push(action.payload);
+            }
+            if (state.selectedProduct && state.selectedProduct._id === action.payload._id) {
+                state.selectedProduct = action.payload;
+            }
+        },
         showAllProducts: (state, action) => {
             state.products = action.payload;
         },
@@ -28,5 +39,5 @@ const productSlice = createSlice({
     },
 });
 
-export const { createProduct, showAllProducts, setSelectedProduct, setLoading, setError } = productSlice.actions;
+export const { createProduct, updateProduct, showAllProducts, setSelectedProduct, setLoading, setError } = productSlice.actions;
 export default productSlice.reducer;
