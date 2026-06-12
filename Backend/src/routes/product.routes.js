@@ -1,13 +1,10 @@
 import { Router } from "express";
 import { protectedRoutes } from "../middlewares/auth.middleware.js";
 import {
-    createProduct,
-    showAllProducts,
-    getProductDetails,
-    showAllProductsForBuyer,
-    addVariants
+    createProduct, showAllProducts, getProductDetails, showAllProductsForBuyer, addVariants, addToCart, deleteCart, removeItemFromCart
 } from "../controllers/product.controller.js";
 import { isSeller } from "../middlewares/seller.middleware.js";
+import { validateAddToCart } from "../validators/cart.validators.js";
 
 import multer from "multer";
 
@@ -31,30 +28,20 @@ const upload = multer({
  @protectedRoutes allows only authenticated users to access these routes
  @isSeller allows only sellers to access these routes
  */
-productRoutes.post(
-    "/create",
-    upload.array("images", 7),
-    protectedRoutes,
-    isSeller,
-    createProduct,
-);
-productRoutes.get(
-    "/get-all-products",
-    protectedRoutes,
-    isSeller,
-    showAllProducts,
-);
-productRoutes.post("/add-variants/:productId",upload.array("images", 7), protectedRoutes, isSeller, addVariants);
+productRoutes.post("/create", upload.array("images", 7), protectedRoutes, isSeller, createProduct);
+productRoutes.get("/get-all-products", protectedRoutes, isSeller, showAllProducts);
+productRoutes.post("/add-variants/:productId", upload.array("images", 7), protectedRoutes, isSeller, addVariants);
 
 /**
  @These routes are for buyers only 
  @protectedRoutes allows only authenticated users to access these routes
  */
-productRoutes.get(
-    "/get-all-products-buyer",
-    protectedRoutes,
-    showAllProductsForBuyer,
+productRoutes.get("/get-all-products-buyer", protectedRoutes, showAllProductsForBuyer,
 );
 productRoutes.get("/details/:id", protectedRoutes, getProductDetails);
+
+productRoutes.post("/add-to-cart/:productId/:variantId", validateAddToCart, protectedRoutes, addToCart);
+productRoutes.delete("/delete-cart", protectedRoutes, deleteCart);
+productRoutes.delete("/remove-from-cart/:productId/:variantId", protectedRoutes, removeItemFromCart);
 
 export default productRoutes;

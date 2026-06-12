@@ -1,6 +1,9 @@
 import { Product } from "../models/product.models.js";
 import User from "../models/auth.models.js";
 import {uploadFile} from "../service/storage.service.js";
+import { Cart } from "../models/cart.models.js";
+import { stockOfVariant } from "../../dao/cart.dao.js";
+
 export const createProduct = async (req, res) => {
     try {
         const { title, description, price, currency } = req.body;
@@ -165,6 +168,171 @@ export const getProductDetails = async (req, res) => {
         res.status(500).json({
             success: false,
             message: "Error fetching product details",
+            error: error.message,
+        });
+    }
+}
+
+export const  addToCart = async (req , res) =>{
+    try{
+        const {productId , variantId} = req.params;
+        const {quantity = 1} = req.body;
+        
+        
+        const product = await Product.findOne({
+            _id: productId,
+            "variants._id": variantId
+        });
+        if(!product){
+            return res.status(404).json({
+                success: false,
+                message: "Product not found",
+            });
+        }
+
+        const stock = await stockOfVariant(productId , variantId);
+        if (typeof stock === "object" && stock.success === false) {
+            return res.status(400).json(stock);
+        }
+
+        const cart = await Cart.findOne({
+            user: req.user._id
+        }) || await Cart.create({
+            user: req.user._id,
+            items: []
+        });
+
+        const isProductInCart = cart.items.some(item => item.product.toString() === productId && item.variant.toString() === variantId);           
+        
+        if(isProductInCart){
+            const quantityInCart = cart.items.find(item => item.product.toString() === productId && item.variant.toString() === variantId)?.quantity;
+            if(quantityInCart + quantity > stock){
+                return res.status(400).json({
+                    success: false,
+                    message: `Only ${stock} left in stock and you have ${quantityInCart} in cart`,
+                });
+            }
+            const updatedCart = await Cart.findOneAndUpdate(
+                {user: req.user._id , "items.product": productId , "items.variant": variantId},
+                {
+                    $inc: {"items.$.quantity": quantity}
+                },
+                {
+                    new: true
+                }
+            );
+            return res.status(200).json({
+                success: true,
+                message: "Cart updated successfully",
+                cart: updatedCart,
+            });
+        } else {
+            if(quantity > stock){
+                return res.status(400).json({
+                    success: false,
+                    message: `Only ${stock} left in stock`,
+                });
+            }
+            const variant = product.variants.find(v => v._id.toString() === variantId);
+            if(!variant){
+                return res.status(404).json({
+                    success: false,
+                    message: "Variant not found",
+                });
+            }
+            cart.items.push({
+                product: productId,
+                variant: variantId,
+                quantity,
+                price: variant.price
+            });
+            await cart.save();
+            return res.status(200).json({
+                success: true,
+                message: "Product added to cart successfully",
+                cart,
+            });
+        }
+    }catch(error){
+        console.log("Error in addToCart controller: ", error);
+        res.status(500).json({
+            success: false,
+            message: "Error adding to cart",
+            error: error.message,
+        });
+    }
+}
+
+export const deleteCart =  async(req , res) => {
+    try{
+        const userId = req.user._id;
+        const cart = await Cart.findOne({
+            user: userId
+        });
+        
+        if(!cart){
+            return res.status(404).json({
+                success: false,
+                message: "Cart not found",
+            });
+        }
+
+        await cart.deleteOne();
+        return res.status(200).json({
+            success: true,
+            message: "Cart deleted successfully",
+        });
+        
+    }catch(error){
+        console.log("Error in deleteCart controller: ", error);
+        res.status(500).json({
+            success: false,
+            message: "Error deleting cart",
+            error: error.message,
+        });
+    }
+}
+
+export const removeItemFromCart = async(req , res) => {
+    try{
+        const {productId , variantId} = req.params;
+        const cart = await Cart.findOneAndUpdate(
+            { 
+                user: req.user._id, 
+                "items.product": productId, 
+                "items.variant": variantId 
+            },
+            {
+                $pull: {
+                    items: {
+                        product: productId,
+                        variant: variantId
+                    }
+                }
+            },
+            {
+                new: true
+            }
+        );
+        
+        if(!cart){
+            return res.status(404).json({
+                success: false,
+                message: "Item not found in cart",
+            });
+        }
+
+        return res.status(200).json({
+            success: true,
+            message: "Item removed from cart successfully",
+            cart,
+        });
+        
+    }catch(error){
+        console.log("Error in removeItemFromCart controller: ", error);
+        res.status(500).json({
+            success: false,
+            message: "Error removing item from cart",
             error: error.message,
         });
     }
