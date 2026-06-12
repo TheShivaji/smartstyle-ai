@@ -11,6 +11,7 @@ import Public from "../feature/product/components/Public.jsx";
 import ShowAllProductForBuyer from "../feature/product/pages/ShowAllProductForBuyer.jsx";
 import ProtectedBuyer from "../feature/product/components/ProtectedBuyer.jsx";
 import Cart from "../feature/cart/pages/Cart.jsx";
+import NotFound from "../feature/auth/pages/NotFound.jsx";
 
 export const AppRouter = createBrowserRouter([
   {
@@ -106,5 +107,9 @@ export const AppRouter = createBrowserRouter([
   {
     path: "/product/show",
     element: <ShowProduct />,
+  },
+  {
+    path: "*",
+    element: <NotFound />,
   },
 ]);
