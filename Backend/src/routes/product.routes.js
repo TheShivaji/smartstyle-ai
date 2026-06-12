@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { protectedRoutes } from "../middlewares/auth.middleware.js";
 import {
-    createProduct, showAllProducts, getProductDetails, showAllProductsForBuyer, addVariants, addToCart, deleteCart, removeItemFromCart
+    createProduct, showAllProducts, getProductDetails, showAllProductsForBuyer, addVariants, addToCart, deleteCart, removeItemFromCart, getCart, updateCartQuantity
 } from "../controllers/product.controller.js";
 import { isSeller } from "../middlewares/seller.middleware.js";
 import { validateAddToCart } from "../validators/cart.validators.js";
@@ -43,5 +43,7 @@ productRoutes.get("/details/:id", protectedRoutes, getProductDetails);
 productRoutes.post("/add-to-cart/:productId/:variantId", validateAddToCart, protectedRoutes, addToCart);
 productRoutes.delete("/delete-cart", protectedRoutes, deleteCart);
 productRoutes.delete("/remove-from-cart/:productId/:variantId", protectedRoutes, removeItemFromCart);
+productRoutes.get("/get-cart", protectedRoutes, getCart);
+productRoutes.put("/update-cart-quantity/:productId/:variantId", protectedRoutes, updateCartQuantity);
 
 export default productRoutes;

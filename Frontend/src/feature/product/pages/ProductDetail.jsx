@@ -13,6 +13,8 @@ import {
   Truck,
   RotateCcw,
 } from "lucide-react";
+import { useCart } from "../../cart/hook/useCart";
+import { toast } from "react-toastify";
 
 const currencySymbols = {
   INR: "₹",
@@ -25,6 +27,7 @@ export default function ProductDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { handleShowProductById } = useProduct();
+  const { handleAddToCart } = useCart();
 
   // Select state from Redux
   const product = useSelector((state) => state.product.selectedProduct);
@@ -33,6 +36,7 @@ export default function ProductDetail() {
 
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [selectedSize, setSelectedSize] = useState("");
+  const [selectedVariantId, setSelectedVariantId] = useState("");
   const [isAdded, setIsAdded] = useState(false);
 
   useEffect(() => {
@@ -47,13 +51,72 @@ export default function ProductDetail() {
     return `${symbol}${amount}`;
   };
 
-  const handleAddToBag = () => {
-    if (!selectedSize) {
-      alert("Please select a size");
+  const getAvailableSizes = () => {
+    if (!product || !product.variants) return [];
+    const sizes = new Set();
+    product.variants.forEach((v) => {
+      const attrs = v.attributes instanceof Map 
+        ? Object.fromEntries(v.attributes) 
+        : v.attributes || {};
+      const sizeKey = Object.keys(attrs).find(k => k.toLowerCase() === "size");
+      if (sizeKey && attrs[sizeKey]) {
+        sizes.add(String(attrs[sizeKey]).toUpperCase());
+      }
+    });
+    return Array.from(sizes);
+  };
+
+  const availableSizes = getAvailableSizes();
+
+  const handleAddToBag = async () => {
+    let variant;
+    
+    if (availableSizes.length > 0) {
+      if (!selectedSize) {
+        toast.warning("Please select a size");
+        return;
+      }
+      variant = product.variants?.find((v) => {
+        const attrs = v.attributes instanceof Map 
+          ? Object.fromEntries(v.attributes) 
+          : v.attributes || {};
+        const sizeKey = Object.keys(attrs).find(k => k.toLowerCase() === "size");
+        return sizeKey && String(attrs[sizeKey]).toUpperCase() === selectedSize.toUpperCase();
+      });
+    } else if (product.variants && product.variants.length > 0) {
+      if (!selectedVariantId) {
+        toast.warning("Please select a style variant");
+        return;
+      }
+      variant = product.variants.find(v => v._id === selectedVariantId);
+    } else {
+      toast.error("This product is currently out of stock (no variants available)");
       return;
     }
-    setIsAdded(true);
-    setTimeout(() => setIsAdded(false), 2000);
+
+    if (!variant) {
+      toast.error("Selected variant is not available");
+      return;
+    }
+
+    if (variant.stock <= 0) {
+      toast.error("This variant is out of stock");
+      return;
+    }
+
+    const res = await handleAddToCart({
+      productId: product._id,
+      variantId: variant._id,
+      body: { quantity: 1 }
+    });
+
+    if (res && res.success) {
+      toast.success("Added to bag!");
+      setIsAdded(true);
+      setTimeout(() => setIsAdded(false), 2000);
+    } else {
+      toast.error(res?.message || "Failed to add to bag");
+    }
   };
 
   if (loading) {
@@ -228,31 +291,71 @@ export default function ProductDetail() {
 
               <hr className="border-neutral-900" />
 
-              {/* Size Selector */}
+              {/* Size / Variant Selector */}
               <div className="space-y-3">
-                <div className="flex justify-between items-baseline">
-                  <h4 className="text-[10px] font-mono tracking-[0.2em] text-neutral-400 uppercase">
-                    Select Size
-                  </h4>
-                  <span className="text-[9px] text-neutral-500 underline cursor-pointer">
-                    Size Guide
-                  </span>
-                </div>
-                <div className="flex flex-wrap gap-2.5">
-                  {["S", "M", "L", "XL", "XXL"].map((size) => (
-                    <button
-                      key={size}
-                      onClick={() => setSelectedSize(size)}
-                      className={`h-11 px-5 rounded-xl text-xs font-mono tracking-widest transition-all cursor-pointer border ${
-                        selectedSize === size
-                          ? "bg-white text-black border-white font-bold"
-                          : "bg-neutral-950 text-neutral-400 border-neutral-800 hover:border-neutral-600 hover:text-white"
-                      }`}
-                    >
-                      {size}
-                    </button>
-                  ))}
-                </div>
+                {availableSizes.length > 0 ? (
+                  <>
+                    <div className="flex justify-between items-baseline">
+                      <h4 className="text-[10px] font-mono tracking-[0.2em] text-neutral-400 uppercase">
+                        Select Size
+                      </h4>
+                      <span className="text-[9px] text-neutral-500 underline cursor-pointer">
+                        Size Guide
+                      </span>
+                    </div>
+                    <div className="flex flex-wrap gap-2.5">
+                      {availableSizes.map((size) => (
+                        <button
+                          key={size}
+                          onClick={() => setSelectedSize(size)}
+                          className={`h-11 px-5 rounded-xl text-xs font-mono tracking-widest transition-all cursor-pointer border ${
+                            selectedSize === size
+                              ? "bg-white text-black border-white font-bold"
+                              : "bg-neutral-950 text-neutral-400 border-neutral-800 hover:border-neutral-600 hover:text-white"
+                          }`}
+                        >
+                          {size}
+                        </button>
+                      ))}
+                    </div>
+                  </>
+                ) : product.variants && product.variants.length > 0 ? (
+                  <>
+                    <div className="flex justify-between items-baseline">
+                      <h4 className="text-[10px] font-mono tracking-[0.2em] text-neutral-400 uppercase">
+                        Select Option
+                      </h4>
+                    </div>
+                    <div className="flex flex-wrap gap-2.5">
+                      {product.variants.map((v, idx) => {
+                        const attrs = v.attributes instanceof Map 
+                          ? Object.fromEntries(v.attributes) 
+                          : v.attributes || {};
+                        const attrText = Object.entries(attrs).length > 0
+                          ? Object.entries(attrs).map(([key, val]) => `${key}: ${val}`).join(", ")
+                          : `Option ${idx + 1}`;
+                        
+                        return (
+                          <button
+                            key={v._id}
+                            onClick={() => setSelectedVariantId(v._id)}
+                            className={`h-11 px-4 rounded-xl text-xs font-mono tracking-widest transition-all cursor-pointer border ${
+                              selectedVariantId === v._id
+                                ? "bg-white text-black border-white font-bold"
+                                : "bg-neutral-950 text-neutral-400 border-neutral-800 hover:border-neutral-600 hover:text-white"
+                            }`}
+                          >
+                            {attrText.toUpperCase()} (STOCK: {v.stock})
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </>
+                ) : (
+                  <div className="p-4 rounded-xl bg-neutral-900/40 border border-neutral-850 text-center">
+                    <p className="text-xs text-neutral-500 italic">This product is currently out of stock</p>
+                  </div>
+                )}
               </div>
 
               {/* CTA Add to Bag */}

@@ -10,6 +10,7 @@ import Unauthorized from "../feature/auth/pages/Unauthorized.jsx";
 import Public from "../feature/product/components/Public.jsx";
 import ShowAllProductForBuyer from "../feature/product/pages/ShowAllProductForBuyer.jsx";
 import ProtectedBuyer from "../feature/product/components/ProtectedBuyer.jsx";
+import Cart from "../feature/cart/pages/Cart.jsx";
 
 export const AppRouter = createBrowserRouter([
   {
@@ -61,6 +62,14 @@ export const AppRouter = createBrowserRouter([
     element: (
       <ProtectedBuyer>
         <ShowAllProductForBuyer />
+      </ProtectedBuyer>
+    ),
+  },
+  {
+    path: "/cart",
+    element: (
+      <ProtectedBuyer>
+        <Cart />
       </ProtectedBuyer>
     ),
   },

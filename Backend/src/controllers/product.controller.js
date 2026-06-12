@@ -337,3 +337,74 @@ export const removeItemFromCart = async(req , res) => {
         });
     }
 }
+
+export const getCart = async (req, res) => {
+    try {
+        const cart = await Cart.findOne({ user: req.user._id }).populate("items.product");
+        res.status(200).json({
+            success: true,
+            cart: cart || { items: [] }
+        });
+    } catch (error) {
+        console.log("Error in getCart controller: ", error);
+        res.status(500).json({
+            success: false,
+            message: "Error fetching cart",
+            error: error.message
+        });
+    }
+};
+
+export const updateCartQuantity = async (req, res) => {
+    try {
+        const { productId, variantId } = req.params;
+        const { quantity } = req.body;
+        
+        if (!quantity || quantity < 1) {
+            return res.status(400).json({
+                success: false,
+                message: "Quantity must be at least 1"
+            });
+        }
+        
+        const stock = await stockOfVariant(productId, variantId);
+        if (typeof stock === "object" && stock.success === false) {
+            return res.status(400).json(stock);
+        }
+        
+        if (quantity > stock) {
+            return res.status(400).json({
+                success: false,
+                message: `Only ${stock} items left in stock`
+            });
+        }
+        
+        const cart = await Cart.findOneAndUpdate(
+            { user: req.user._id, "items.product": productId, "items.variant": variantId },
+            {
+                $set: { "items.$.quantity": quantity }
+            },
+            { new: true }
+        );
+        
+        if (!cart) {
+            return res.status(404).json({
+                success: false,
+                message: "Item not found in cart"
+            });
+        }
+        
+        return res.status(200).json({
+            success: true,
+            message: "Cart quantity updated successfully",
+            cart
+        });
+    } catch (error) {
+        console.log("Error in updateCartQuantity controller: ", error);
+        res.status(500).json({
+            success: false,
+            message: "Error updating cart quantity",
+            error: error.message
+        });
+    }
+};

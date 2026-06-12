@@ -13,6 +13,7 @@ import {
   LogOut
 } from "lucide-react";
 import { useAuth } from "../../auth/hook/useAuth";
+import { useCart } from "../../cart/hook/useCart";
 
 const currencySymbols = {
   INR: "₹",
@@ -24,6 +25,7 @@ const currencySymbols = {
 export default function ShowAllProductForBuyer() {
   const { handleShowAllProductsForBuyer } = useProduct();
   const { logout } = useAuth();
+  const { handleGetCart } = useCart();
   const navigate = useNavigate();
 
   const handleLogoutClick = async () => {
@@ -36,6 +38,7 @@ export default function ShowAllProductForBuyer() {
   const loading = useSelector((state) => state.product.loading);
   const error = useSelector((state) => state.product.error);
   const user = useSelector((state) => state.auth.user);
+  const cartItems = useSelector((state) => state.cart.items) || [];
 
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState("newest"); // newest, priceAsc, priceDesc
@@ -43,6 +46,7 @@ export default function ShowAllProductForBuyer() {
 
   useEffect(() => {
     handleShowAllProductsForBuyer();
+    handleGetCart();
   }, []);
 
   const formatPrice = (price, currency) => {
@@ -120,6 +124,13 @@ export default function ShowAllProductForBuyer() {
                 HELLO, {user.name?.toUpperCase() || "BUYER"}
               </span>
             )}
+            <button
+              onClick={() => navigate("/cart")}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-neutral-850 hover:border-neutral-700 bg-transparent text-neutral-400 hover:text-white font-mono text-[9px] font-bold tracking-wider transition-all duration-300 cursor-pointer"
+            >
+              <ShoppingBag className="h-3 w-3 text-neutral-400" />
+              BAG ({cartItems.length})
+            </button>
             <button
               onClick={handleLogoutClick}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-neutral-850 hover:border-neutral-700 bg-transparent text-neutral-400 hover:text-white font-mono text-[9px] font-bold tracking-wider transition-all duration-300 cursor-pointer"
