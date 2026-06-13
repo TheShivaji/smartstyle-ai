@@ -2,6 +2,7 @@ import express from "express";
 import cookieParser from "cookie-parser";
 import authRoutes from "./routes/auth.routes.js";
 import productRoutes from "./routes/product.routes.js";
+import orderRoutes from "./routes/order.routes.js";
 import cors from "cors";
 const app = express();
 
@@ -16,6 +17,7 @@ app.use(
 
 app.use("/api/auth", authRoutes);
 app.use("/api/product", productRoutes);
+app.use("/api/orders", orderRoutes);
 
 // Global Error Handler
 app.use((err, req, res, next) => {
