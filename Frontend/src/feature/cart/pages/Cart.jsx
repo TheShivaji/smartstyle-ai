@@ -243,9 +243,10 @@ export default function Cart() {
               {/* Items List */}
               <div className="lg:col-span-2 space-y-4">
                 {items.map((item) => {
-                  const product = item.product || {};
+                  const product = item.product && typeof item.product === "object" ? item.product : {};
+                  const variantId = item.variant?._id || item.variant;
                   const activeVariant =
-                    product.variants?.find((v) => v._id === item.variant) || {};
+                    product.variants?.find((v) => v._id === variantId) || {};
                   const itemImage =
                     activeVariant.images?.[0]?.url ||
                     product.images?.[0]?.url;
@@ -259,7 +260,7 @@ export default function Cart() {
 
                   return (
                     <div
-                      key={`${product._id}-${item.variant}`}
+                      key={`${product._id || "unknown"}-${variantId}`}
                       className="flex gap-4 p-4 rounded-2xl bg-[#0c0c0c]/80 border border-neutral-900 hover:border-neutral-800 transition-all duration-300 relative group"
                     >
                       {/* Product Image */}

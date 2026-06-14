@@ -2,28 +2,16 @@ import React, { useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { useOrder } from "../hook/useOrder";
+import OrderDeliveryInfo from "../components/OrderDeliveryInfo";
+import OrderItemsList from "../components/OrderItemsList";
 import { 
   ArrowLeft, 
   ShoppingBag, 
   Loader2, 
   AlertCircle, 
-  MapPin, 
-  CreditCard, 
-  Package, 
-  Truck, 
-  CheckCircle, 
-  XCircle,
-  Calendar,
-  Layers
+  Calendar
 } from "lucide-react";
 import { toast } from "react-toastify";
-
-const currencySymbols = {
-  INR: "₹",
-  USD: "$",
-  EUR: "€",
-  GBP: "£",
-};
 
 const statusStyles = {
   PENDING: "bg-amber-950/20 border-amber-900/40 text-amber-400",
@@ -66,11 +54,6 @@ export default function OrderDetails() {
     return new Date(dateString).toLocaleDateString(undefined, options);
   };
 
-  const formatPrice = (price, currency) => {
-    const symbol = currencySymbols[currency] || "₹";
-    return `${symbol}${Number(price || 0).toLocaleString()}`;
-  };
-
   if (loading && !currentOrder) {
     return (
       <div className="min-h-screen bg-neutral-950 text-neutral-200 flex flex-col items-center justify-center p-8">
@@ -100,11 +83,7 @@ export default function OrderDetails() {
 
   if (!currentOrder) return null;
 
-  const address = currentOrder.shipmentAddress || {};
   const statusStyle = statusStyles[currentOrder.status] || "border-neutral-850 text-neutral-400";
-  const productItem = currentOrder.items?.[0] || {};
-  const product = productItem.product || {};
-  const currency = product.price?.currency || "INR";
 
   return (
     <>
@@ -173,123 +152,9 @@ export default function OrderDetails() {
             )}
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            {/* Delivery address card */}
-            <div className="p-5 rounded-2xl bg-[#0c0c0c]/85 border border-neutral-900 space-y-3">
-              <div className="flex items-center gap-2 border-b border-neutral-900 pb-2 text-neutral-400">
-                <MapPin className="h-4 w-4" />
-                <span className="text-[10px] font-mono tracking-wider uppercase">Shipment Address</span>
-              </div>
-              <div className="text-xs space-y-1 font-light text-neutral-300 leading-relaxed">
-                <p className="font-semibold text-white">{address.fullName}</p>
-                <p>{address.address}</p>
-                {address.landmark && <p>Landmark: {address.landmark}</p>}
-                <p>{address.city}, {address.state} - {address.pincode}</p>
-                <p className="pt-2 font-mono text-[10px] text-neutral-500">TEL: {address.mobileNo}</p>
-              </div>
-            </div>
+          <OrderDeliveryInfo order={currentOrder} />
 
-            {/* Payment card */}
-            <div className="p-5 rounded-2xl bg-[#0c0c0c]/85 border border-neutral-900 space-y-3">
-              <div className="flex items-center gap-2 border-b border-neutral-900 pb-2 text-neutral-400">
-                <CreditCard className="h-4 w-4" />
-                <span className="text-[10px] font-mono tracking-wider uppercase">Payment Method</span>
-              </div>
-              <div className="text-xs space-y-1 font-light text-neutral-300">
-                <p className="font-semibold text-white">Cash on Delivery (COD)</p>
-                <p className="font-mono text-[10px] text-neutral-500 uppercase">
-                  Status: <span className="text-neutral-400">{currentOrder.paymentStatus || "PENDING"}</span>
-                </p>
-                <p className="text-[10px] text-neutral-500 font-light pt-2 leading-relaxed">
-                  Pay at door when shipment is delivered by our logistics team.
-                </p>
-              </div>
-            </div>
-
-            {/* Pricing Summary card */}
-            <div className="p-5 rounded-2xl bg-[#0c0c0c]/85 border border-neutral-900 space-y-3">
-              <div className="flex items-center gap-2 border-b border-neutral-900 pb-2 text-neutral-400">
-                <Layers className="h-4 w-4" />
-                <span className="text-[10px] font-mono tracking-wider uppercase">Billing Summary</span>
-              </div>
-              <div className="space-y-2.5 font-mono text-[10px] text-neutral-400">
-                <div className="flex justify-between">
-                  <span>ITEMS SUB-TOTAL</span>
-                  <span>{formatPrice(currentOrder.totalAmount, currency)}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>DELIVERY FEE</span>
-                  <span className="text-green-500 font-bold">FREE</span>
-                </div>
-                <div className="border-t border-neutral-900 pt-2.5 flex justify-between text-xs font-semibold text-white">
-                  <span>GRAND TOTAL</span>
-                  <span>{formatPrice(currentOrder.totalAmount, currency)}</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Items List */}
-          <div className="p-6 rounded-2xl bg-[#0c0c0c]/85 border border-neutral-900 space-y-6">
-            <h2 className="text-lg font-serif font-light text-white border-b border-neutral-900 pb-3 tracking-wide">
-              Package Items
-            </h2>
-
-            <div className="space-y-4">
-              {currentOrder.items?.map((item) => {
-                const prod = item.product || {};
-                const variantId = item.variant;
-                const activeVar = prod.variants?.find((v) => v._id === variantId) || {};
-                const itemImage = activeVar.images?.[0]?.url || prod.images?.[0]?.url;
-                const attributes = activeVar.attributes
-                  ? Object.entries(activeVar.attributes)
-                      .map(([key, val]) => `${key.toUpperCase()}: ${val}`)
-                      .join(" | ")
-                  : "";
-
-                return (
-                  <div
-                    key={`${prod._id}-${variantId}`}
-                    className="flex gap-4 p-4 rounded-xl border border-neutral-900 bg-neutral-950/20 hover:border-neutral-800 transition-all duration-300"
-                  >
-                    <div className="w-16 sm:w-20 aspect-[3/4] rounded-lg overflow-hidden border border-neutral-900 bg-neutral-950 shrink-0">
-                      {itemImage ? (
-                        <img
-                          src={itemImage}
-                          alt={prod.title}
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center text-[6px] font-mono tracking-widest text-neutral-800">
-                          NO IMG
-                        </div>
-                      )}
-                    </div>
-                    
-                    <div className="flex-1 flex flex-col justify-between py-1">
-                      <div className="space-y-1">
-                        <h3 className="text-xs font-mono font-bold uppercase tracking-wider text-neutral-100">
-                          {prod.title}
-                        </h3>
-                        <p className="text-[9px] text-neutral-500 font-mono">
-                          {attributes || "NO SPECIFICATIONS"}
-                        </p>
-                      </div>
-                      
-                      <div className="flex justify-between items-end">
-                        <p className="text-[10px] text-neutral-400 font-light">
-                          Quantity: {item.quantity}
-                        </p>
-                        <p className="text-xs font-mono font-semibold text-white">
-                          {formatPrice((item.price?.amount || prod.price?.amount || 0) * item.quantity, currency)}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
+          <OrderItemsList items={currentOrder.items} />
         </main>
       </div>
     </>

@@ -220,7 +220,7 @@ export const  addToCart = async (req , res) =>{
                 {
                     new: true
                 }
-            );
+            ).populate("items.product");
             return res.status(200).json({
                 success: true,
                 message: "Cart updated successfully",
@@ -247,6 +247,7 @@ export const  addToCart = async (req , res) =>{
                 price: variant.price
             });
             await cart.save();
+            await cart.populate("items.product");
             return res.status(200).json({
                 success: true,
                 message: "Product added to cart successfully",
@@ -313,7 +314,7 @@ export const removeItemFromCart = async(req , res) => {
             {
                 new: true
             }
-        );
+        ).populate("items.product");
         
         if(!cart){
             return res.status(404).json({
@@ -385,7 +386,7 @@ export const updateCartQuantity = async (req, res) => {
                 $set: { "items.$.quantity": quantity }
             },
             { new: true }
-        );
+        ).populate("items.product");
         
         if (!cart) {
             return res.status(404).json({
