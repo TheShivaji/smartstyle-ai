@@ -125,6 +125,12 @@ export default function ShowAllProductForBuyer() {
               </span>
             )}
             <button
+              onClick={() => navigate("/my-orders")}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-neutral-850 hover:border-neutral-700 bg-transparent text-neutral-400 hover:text-white font-mono text-[9px] font-bold tracking-wider transition-all duration-300 cursor-pointer"
+            >
+              MY ORDERS
+            </button>
+            <button
               onClick={() => navigate("/cart")}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-neutral-850 hover:border-neutral-700 bg-transparent text-neutral-400 hover:text-white font-mono text-[9px] font-bold tracking-wider transition-all duration-300 cursor-pointer"
             >

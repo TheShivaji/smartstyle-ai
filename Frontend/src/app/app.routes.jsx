@@ -12,6 +12,9 @@ import ShowAllProductForBuyer from "../feature/product/pages/ShowAllProductForBu
 import ProtectedBuyer from "../feature/product/components/ProtectedBuyer.jsx";
 import Cart from "../feature/cart/pages/Cart.jsx";
 import NotFound from "../feature/auth/pages/NotFound.jsx";
+import Checkout from "../feature/order/pages/Checkout.jsx";
+import Orders from "../feature/order/pages/Orders.jsx";
+import OrderDetails from "../feature/order/pages/OrderDetails.jsx";
 
 export const AppRouter = createBrowserRouter([
   {
@@ -71,6 +74,30 @@ export const AppRouter = createBrowserRouter([
     element: (
       <ProtectedBuyer>
         <Cart />
+      </ProtectedBuyer>
+    ),
+  },
+  {
+    path: "/checkout/:productId/:variantId",
+    element: (
+      <ProtectedBuyer>
+        <Checkout />
+      </ProtectedBuyer>
+    ),
+  },
+  {
+    path: "/my-orders",
+    element: (
+      <ProtectedBuyer>
+        <Orders />
+      </ProtectedBuyer>
+    ),
+  },
+  {
+    path: "/order-details/:orderId",
+    element: (
+      <ProtectedBuyer>
+        <OrderDetails />
       </ProtectedBuyer>
     ),
   },

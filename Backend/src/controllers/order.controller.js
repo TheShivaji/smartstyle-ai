@@ -151,8 +151,6 @@ export const getMyOrders = async (req, res) => {
 export const cancelOrder = async (req, res) => {
     try {
         const { orderId } = req.params;
-
-        // 1. Find order and verify it belongs to the logged-in buyer
         const order = await Order.findOne({ _id: orderId, user: req.user._id });
 
         if (!order) {
@@ -197,6 +195,31 @@ export const cancelOrder = async (req, res) => {
     }
 }
 
+export const getOrderDetails = async (req, res) => {
+    try {
+        const { orderId } = req.params;
+        const order = await Order.findOne({ _id: orderId, user: req.user._id }).populate("items.product");
+        if (!order) {
+            return res.status(404).json({
+                success: false,
+                message: "Order not found",
+            });
+        }
+        return res.status(200).json({
+            success: true,
+            message: "Order details fetched successfully",
+            order,
+        });
+    } catch (error) {
+        console.error("Error in getOrderDetails controller: ", error);
+        return res.status(500).json({
+            success: false,
+            message: "Error fetching order details",
+            error: error.message,
+        });
+    }
+}
+
 export const applyCoupon = async (req, res) => {
     try {
         const { code } = req.body;
@@ -222,96 +245,3 @@ export const applyCoupon = async (req, res) => {
     }
 }
 
-export const addToWishlist = async (req, res) => {
-    try {
-        const { productId } = req.params;
-        const user = await User.findById(req.user._id);
-        if (!user) {
-            return res.status(404).json({
-                success: false,
-                message: "User not found",
-            });
-        }
-        const product = await Product.findById(productId);
-        if (!product) {
-            return res.status(404).json({
-                success: false,
-                message: "Product not found",
-            });
-        }
-        user.wishlist.push(productId);
-        await user.save();
-        return res.status(200).json({
-            success: true,
-            message: "Product added to wishlist successfully",
-            user,
-        });
-    } catch (error) {
-        console.error("Error in addToWishlist controller: ", error);
-        return res.status(500).json({
-            success: false,
-            message: "Error adding product to wishlist",
-            error: error.message,
-        });
-    }
-}
-
-export const removeFromWishlist = async (req, res) => {
-    try {
-        const { productId } = req.params;
-        const user = await User.findById(req.user._id);
-
-        if (!user) {
-            return res.status(404).json({
-                success: false,
-                message: "User not found",
-            });
-        }
-        const product = await Product.findById(productId);
-        if (!product) {
-            return res.status(404).json({
-                success: false,
-                message: "Product not found",
-            });
-        }
-
-        user.wishlist.pull(productId);
-        await user.save();
-        return res.status(200).json({
-            success: true,
-            message: "Product removed from wishlist successfully",
-            user,
-        });
-    } catch (error) {
-        console.error("Error in removeFromWishlist controller: ", error);
-        return res.status(500).json({
-            success: false,
-            message: "Error removing product from wishlist",
-            error: error.message,
-        });
-    }
-};
-
-export const getWishlist = async (req, res) => {
-    try {
-        const user = await User.findById(req.user._id).populate("wishlist");
-        if (!user) {
-            return res.status(404).json({
-                success: false,
-                message: "User not found",
-            });
-        }
-        return res.status(200).json({
-            success: true,
-            message: "Wishlist fetched successfully",
-            wishlist: user.wishlist,
-        });
-    } catch (error) {
-        console.error("Error in getWishlist controller: ", error);
-        return res.status(500).json({
-            success: false,
-            message: "Error fetching wishlist",
-            error: error.message,
-        });
-    }
-};

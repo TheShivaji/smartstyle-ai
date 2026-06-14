@@ -108,8 +108,14 @@ export default function Cart() {
   };
 
   const handleCheckout = () => {
-    toast.success("Proceeding to checkout!");
-    // You can navigate to a checkout page here if implemented
+    if (items.length === 0) {
+      toast.error("Your bag is empty!");
+      return;
+    }
+    const firstItem = items[0];
+    const productId = firstItem.product._id || firstItem.product;
+    const variantId = firstItem.variant._id || firstItem.variant;
+    navigate(`/checkout/${productId}/${variantId}`);
   };
 
   const subtotal = calculateSubtotal();
@@ -159,16 +165,24 @@ export default function Cart() {
               SNITCH BAG
             </span>
           </div>
-          <button
-            onClick={async () => {
-              await logout();
-              navigate("/login");
-            }}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-neutral-850 hover:border-neutral-700 bg-transparent text-neutral-400 hover:text-white font-mono text-[9px] font-bold tracking-wider transition-all duration-300 cursor-pointer"
-          >
-            <LogOut className="h-3 w-3" />
-            LOGOUT
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => navigate("/my-orders")}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-neutral-850 hover:border-neutral-700 bg-transparent text-neutral-400 hover:text-white font-mono text-[9px] font-bold tracking-wider transition-all duration-300 cursor-pointer"
+            >
+              MY ORDERS
+            </button>
+            <button
+              onClick={async () => {
+                await logout();
+                navigate("/login");
+              }}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-neutral-850 hover:border-neutral-700 bg-transparent text-neutral-400 hover:text-white font-mono text-[9px] font-bold tracking-wider transition-all duration-300 cursor-pointer"
+            >
+              <LogOut className="h-3 w-3" />
+              LOGOUT
+            </button>
+          </div>
         </header>
 
         {/* Main Content */}
